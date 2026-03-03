@@ -431,12 +431,12 @@ body {
 
 /* ── SECTION BODY (expanded permissions) ── */
 .section-body {
-  border-top: 1px solid #edeff3;
+  border-top: 1px solid #e1e4eb;
 }
 
 .perms-subheader {
   background: #f9fafb;
-  border-bottom: 1px solid #edeff3;
+  border-bottom: 1px solid #e1e4eb;
   padding: 8px 16px;
   font-size: 14px;
   font-weight: 500;
@@ -447,7 +447,7 @@ body {
 /* ── PERMISSION ROWS ── */
 .perm-row {
   display: flex;
-  border-bottom: 1px solid #edeff3;
+  border-bottom: 1px solid #e1e4eb;
 }
 .section-body > *:last-child {
   border-bottom: none;
@@ -456,7 +456,7 @@ body {
 .perm-item {
   flex: 1;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 8px;
   padding: 14px 16px;
   cursor: pointer;
@@ -482,6 +482,7 @@ body {
   border: 1.5px solid #a3adc2;
   background: #ffffff;
   flex-shrink: 0;
+  margin-top: 2px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -499,11 +500,16 @@ body {
 /* ── PERM LABEL ── */
 .perm-label-wrap {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  flex-direction: column;
   flex: 1;
   min-width: 0;
-  overflow: hidden;
+  gap: 2px;
+}
+.perm-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
 }
 .perm-label {
   font-size: 14px;
@@ -514,6 +520,20 @@ body {
   white-space: nowrap;
   flex-shrink: 1;
   min-width: 0;
+}
+.perm-desc {
+  font-size: 12px;
+  color: #697a9b;
+  line-height: 16px;
+  white-space: normal;
+}
+
+/* ── STACKED ROW (replaces side-by-side columns) ── */
+.perm-row--stacked {
+  flex-direction: column;
+}
+.perm-row--stacked .perm-item + .perm-item {
+  padding-top: 2px;
 }
 
 /* ── CORE BADGE ── */
@@ -554,7 +574,7 @@ body {
 
 /* ── READ MODE: NO PERMISSIONS MESSAGE ── */
 .no-perms-msg {
-  border-top: 1px solid #edeff3;
+  border-top: 1px solid #e1e4eb;
   padding: 10px 16px;
   font-size: 13px;
   color: #525f7a;
@@ -776,8 +796,8 @@ body {
           <span class="module-label">Unit</span>
         </div>
 
-        <!-- Recruitment (active) -->
-        <div class="module-item active">
+        <!-- Recruitment -->
+        <div class="module-item" data-module="recruitment" onclick="switchModule('recruitment')">
           <span class="module-icon">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
               <circle cx="6" cy="5.5" r="2.5"/>
@@ -789,7 +809,7 @@ body {
         </div>
 
         <!-- Absence management -->
-        <div class="module-item">
+        <div class="module-item" data-module="absence" onclick="switchModule('absence')">
           <span class="module-icon">
             <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5">
               <circle cx="8" cy="5.5" r="2.5"/>
@@ -862,98 +882,174 @@ const SECTIONS = [
     id: 'job',
     label: 'Job',
     rows: [
-      { view: { id: 'job-view',           label: 'View job details',     core: true },
-        edit: { id: 'job-edit',           label: 'Edit job details' } },
-      { view: { id: 'job-positions',      label: 'View job positions' } },
-      { view: { id: 'job-employees',      label: 'View job employees' } },
-      { view: { id: 'job-vacancies',      label: 'View job vacancies' } },
-      { view: { id: 'job-pipelines-view', label: 'View job pipelines' },
-        edit: { id: 'job-pipelines-edit', label: 'Edit job pipelines' } },
-      { view: { id: 'job-cands-view',     label: 'View job candidates' },
-        edit: { id: 'job-cands-edit',     label: 'Edit job candidates' } },
-      { view: { id: 'job-activity',       label: 'View job activity' } },
+      { view: { id: 'job-view', label: 'View job details', core: true,
+                desc: 'Access basic job information including title, department, and employment details.' },
+        edit: { id: 'job-edit', label: 'Edit job details',
+                desc: 'Modify job attributes, update status, and manage job-level settings.' } },
+      { view: { id: 'job-positions', label: 'View job positions',
+                desc: 'See all positions associated with this job.' } },
+      { view: { id: 'job-employees', label: 'View job employees',
+                desc: 'View employees currently assigned to positions under this job.' } },
+      { view: { id: 'job-vacancies', label: 'View job vacancies',
+                desc: 'Access the list of open and closed vacancies linked to this job.' } },
+      { view: { id: 'job-pipelines-view', label: 'View job pipelines',
+                desc: 'See recruitment pipeline schemes associated with this job.' },
+        edit: { id: 'job-pipelines-edit', label: 'Edit job pipelines',
+                desc: 'Configure and modify pipeline stages for job-based recruitment.' } },
+      { view: { id: 'job-cands-view', label: 'View job candidates',
+                desc: 'Access candidate profiles linked to vacancies under this job.' },
+        edit: { id: 'job-cands-edit', label: 'Edit job candidates',
+                desc: 'Update candidate information and manage their job applications.' } },
+      { view: { id: 'job-activity', label: 'View job activity',
+                desc: 'See the activity log and history of changes for this job.' } },
       { separator: 'Sensitive data: Financial' },
-      { view: { id: 'job-comp-view',      label: 'View compensation' },
-        edit: { id: 'job-comp-edit',      label: 'Edit compensation' } },
+      { view: { id: 'job-comp-view', label: 'View compensation',
+                desc: 'Access salary ranges and compensation details defined for this job.' },
+        edit: { id: 'job-comp-edit', label: 'Edit compensation',
+                desc: 'Modify compensation ranges and financial settings for this job.' } },
     ]
   },
   {
     id: 'vacancy',
     label: 'Vacancy',
     rows: [
-      { view: { id: 'vac-view',    label: 'View vacancy details', core: true },
-        edit: { id: 'vac-edit',    label: 'Edit vacancy details' } },
-      { view: { id: 'vac-hiring',  label: 'Manage hiring team' } },
-      { view: { id: 'vac-activity',label: 'View vacancy activity' } },
+      { view: { id: 'vac-view', label: 'View vacancy details', core: true,
+                desc: 'Access basic vacancy information including title, status, and headcount.' },
+        edit: { id: 'vac-edit', label: 'Edit vacancy details',
+                desc: 'Modify vacancy settings, update status, and manage vacancy attributes.' } },
+      { view: { id: 'vac-hiring', label: 'Manage hiring team',
+                desc: 'Add or remove members from the hiring team for this vacancy.' }, showWhen: 'vac-edit' },
+      { view: { id: 'vac-activity', label: 'View vacancy activity',
+                desc: 'See the activity log and timeline of changes for this vacancy.' } },
     ]
   },
   {
     id: 'position',
     label: 'Position',
     rows: [
-      { view: { id: 'pos-view', label: 'View position details', core: true },
-        edit: { id: 'pos-edit', label: 'Edit position details' } },
+      { view: { id: 'pos-view', label: 'View position details', core: true,
+                desc: 'Access position information including role, level, and assignment details.' },
+        edit: { id: 'pos-edit', label: 'Edit position details',
+                desc: 'Modify position attributes, update level, and manage assignments.' } },
     ]
   },
   {
     id: 'pipelines',
     label: 'Recruitment pipelines',
     rows: [
-      { view: { id: 'pipe-view', label: 'View recruitment pipelines', core: true },
-        edit: { id: 'pipe-edit', label: 'Edit recruitment pipelines' } },
+      { view: { id: 'pipe-view', label: 'View recruitment pipelines', core: true,
+                desc: 'Access pipeline schemes and stages used in the recruitment process.' },
+        edit: { id: 'pipe-edit', label: 'Edit recruitment pipelines',
+                desc: 'Create, modify, and manage recruitment pipeline configurations.' } },
     ]
   },
   {
     id: 'candidate',
     label: 'Candidate',
     rows: [
-      { view: { id: 'cand-view',   label: 'View candidate info', core: true },
-        edit: { id: 'cand-edit',   label: 'Edit candidate info' } },
-      { view: { id: 'cand-status', label: 'Change candidate status' } },
+      { view: { id: 'cand-view', label: 'View candidate info', core: true,
+                desc: 'Access candidate profiles including personal details and application history.' },
+        edit: { id: 'cand-edit', label: 'Edit candidate info',
+                desc: 'Update candidate data, add notes, and manage application details.' } },
+      { view: { id: 'cand-status', label: 'Change candidate status',
+                desc: 'Move candidates through pipeline stages and update their application status.' }, showWhen: 'cand-edit' },
       { separator: 'Sensitive data: Financial' },
-      { view: { id: 'cand-sal-view', label: 'View salary expectations' },
-        edit: { id: 'cand-sal-edit', label: 'Edit salary expectations' } },
+      { view: { id: 'cand-sal-view', label: 'View salary expectations',
+                desc: 'See the expected compensation range submitted by the candidate.' },
+        edit: { id: 'cand-sal-edit', label: 'Edit salary expectations',
+                desc: "Update and modify the candidate's salary expectation details." } },
     ]
   },
   {
     id: 'contact',
     label: 'Contact',
     rows: [
-      { view: { id: 'cont-view', label: 'View contact info', core: true },
-        edit: { id: 'cont-edit', label: 'Edit contact info' } },
+      { view: { id: 'cont-view', label: 'View contact info', core: true,
+                desc: 'Access contact details including email, phone, and social profiles.' },
+        edit: { id: 'cont-edit', label: 'Edit contact info',
+                desc: 'Update contact information and manage communication preferences.' } },
     ]
   },
   {
     id: 'offer',
     label: 'Offer',
     rows: [
-      { view: { id: 'offer-view', label: 'View offer', core: true },
-        edit: { id: 'offer-edit', label: 'Edit offer' } },
+      { view: { id: 'offer-view', label: 'View offer', core: true,
+                desc: 'Access offer details including compensation, terms, and current status.' },
+        edit: { id: 'offer-edit', label: 'Edit offer',
+                desc: 'Create, modify, and manage job offers including compensation and terms.' } },
     ]
   },
   {
     id: 'offer-template',
     label: 'Offer template',
     rows: [
-      { view: { id: 'ot-view', label: 'View offer template', core: true },
-        edit: { id: 'ot-edit', label: 'Edit offer template' } },
+      { view: { id: 'ot-view', label: 'View offer template', core: true,
+                desc: 'Access offer template content, formatting, and default variable settings.' },
+        edit: { id: 'ot-edit', label: 'Edit offer template',
+                desc: 'Create and modify offer templates used for generating job offers.' } },
     ]
   },
 ];
 
+const ABSENCE_SECTIONS = [
+  {
+    id: 'leave-types',
+    label: 'Leave types and policies',
+    rows: [
+      { view: { id: 'lt-view-own', label: 'View own', core: true,
+                desc: 'Access your own leave type assignments and applied policy settings.' },
+        mid:  { id: 'lt-view-all', label: 'View all',
+                desc: 'Access leave type definitions and policy configurations for all employees.' },
+        edit: { id: 'lt-edit-all', label: 'Edit all',
+                desc: 'Create, modify, and manage leave types and policy settings organization-wide.' } },
+      { view: { id: 'lt-assign', label: 'Assign leave policy',
+                desc: 'Assign or change leave policies for individual employees.' }, showWhen: 'lt-view-all' },
+    ],
+  },
+  {
+    id: 'leaves-bal',
+    label: 'Leaves & Leave balance',
+    rows: [
+      { view: { id: 'lb-view-own', label: 'View own', core: true,
+                desc: 'Access your own leave requests, accrual balances, and leave history.' },
+        mid:  { id: 'lb-view-all', label: 'View all',
+                desc: 'View leave records and balances for all employees in scope.' },
+        edit: { id: 'lb-edit-all', label: 'Edit all',
+                desc: 'Create, approve, and manage leave-related records for employees.' } },
+      { view: { id: 'lb-emp-balance', label: 'View employees balance and leave history',
+                desc: 'Access accrual balances and historical leave usage across employees.' }, showWhen: 'lb-view-all' },
+      { view: { id: 'lb-emp-details', label: 'View employees leave details',
+                desc: 'See detailed leave request information including dates, type, and approval status.' }, showWhen: 'lb-view-all' },
+      { view: { id: 'lb-cancel',   label: "Cancel an employee's leave request",
+                desc: 'Cancel approved or pending leave requests submitted by employees.' },      showWhen: 'lb-edit-all' },
+      { view: { id: 'lb-request',  label: 'Request leave on behalf of employee',
+                desc: 'Submit leave requests on behalf of employees as a manager or HR admin.' },  showWhen: 'lb-edit-all' },
+      { view: { id: 'lb-edit-req', label: 'Edit employees leave requests',
+                desc: 'Modify submitted leave request details such as dates and leave type.' },    showWhen: 'lb-edit-all' },
+      { view: { id: 'lb-adjust',   label: 'Adjust leave balance for employee',
+                desc: 'Manually add or deduct leave balance for accrual corrections or adjustments.' }, showWhen: 'lb-edit-all' },
+    ],
+  },
+];
+
+const ALL_SECTIONS = [...SECTIONS, ...ABSENCE_SECTIONS];
+
 // ── STATE ──
 const state = {
-  mode: 'edit',   // 'edit' | 'read'
-  sections: {},   // id → boolean (on/off)
-  checked: {},    // permissionId → boolean
-  saved: null,    // snapshot saved on Save click
+  mode: 'edit',            // 'edit' | 'read'
+  module: 'recruitment',   // 'recruitment' | 'absence'
+  sections: {},            // id → boolean (on/off)
+  checked: {},             // permissionId → boolean
+  saved: null,             // snapshot saved on Save click
 };
 
-SECTIONS.forEach(s => {
+ALL_SECTIONS.forEach(s => {
   state.sections[s.id] = false;
   s.rows.forEach(row => {
     if (row.separator) return;
     if (row.view && !row.view.core) state.checked[row.view.id] = false;
+    if (row.mid)  state.checked[row.mid.id]  = false;
     if (row.edit) state.checked[row.edit.id] = false;
   });
 });
@@ -980,39 +1076,37 @@ function renderCheckbox(isCore, isChecked) {
 }
 
 function renderPermItem(perm, isSecondary, editIsChecked, sectionOn) {
-  const isRead         = state.mode === 'read';
-  const isCore         = !isSecondary && perm.core === true;
-  const isLockedByEdit = !isCore && !isSecondary && (editIsChecked || false);
-  const isLocked       = isCore || isLockedByEdit;
+  const isRead      = state.mode === 'read';
+  const isCore      = !isSecondary && perm.core === true;
+  const isLocked    = isCore;
   // In read mode, if section is OFF nothing is checked
-  const effectiveOn    = isRead ? (sectionOn !== false) : true;
-  const isChecked      = !effectiveOn ? false : (isLocked ? true : (state.checked[perm.id] || false));
+  const effectiveOn = isRead ? (sectionOn !== false) : true;
+  const isChecked   = !effectiveOn ? false : (isLocked ? true : (state.checked[perm.id] || false));
 
   let cbClass = 'perm-cb';
   if (isRead) {
     cbClass += isChecked ? ' read-on' : ' read-off';
   } else {
-    if (isCore || isLockedByEdit) cbClass += ' is-core';   // gray
-    else if (isChecked)           cbClass += ' is-checked'; // blue
+    if (isCore)         cbClass += ' is-core';    // gray
+    else if (isChecked) cbClass += ' is-checked'; // blue
   }
 
   const itemClass = `perm-item${!isRead && isLocked ? ' is-core' : ''}${isRead ? ' is-read' : ''}`;
   const onclick   = (isRead || isLocked) ? '' : `onclick="togglePerm('${perm.id}')"`;
 
   let tipAttrs = '';
-  if (!isRead) {
-    if (isCore) {
-      tipAttrs = `onmouseenter="showTip(this,'Core permission. Toggle section off to remove access.')" onmouseleave="hideTip()"`;
-    } else if (isLockedByEdit) {
-      tipAttrs = `onmouseenter="showTip(this,'Edit permission requires View access')" onmouseleave="hideTip()"`;
-    }
+  if (!isRead && isCore) {
+    tipAttrs = `onmouseenter="showTip(this,'Core permission. Toggle section off to remove access.')" onmouseleave="hideTip()"`;
   }
 
   return `<div class="${itemClass}" ${onclick} ${tipAttrs}>
     <div class="${cbClass}">${isChecked ? CHECK_MARK : ''}</div>
     <span class="perm-label-wrap">
-      <span class="perm-label">${perm.label}</span>
-      ${isCore && !isRead ? '<span class="core-badge">Core</span>' : ''}
+      <span class="perm-label-row">
+        <span class="perm-label">${perm.label}</span>
+        ${isCore && !isRead ? '<span class="core-badge">Core</span>' : ''}
+      </span>
+      ${perm.desc ? `<span class="perm-desc">${perm.desc}</span>` : ''}
     </span>
   </div>`;
 }
@@ -1024,12 +1118,27 @@ function renderRow(row, sectionOn) {
 
   const isRead        = state.mode === 'read';
   const editIsChecked = row.edit ? (sectionOn ? (state.checked[row.edit.id] || false) : false) : false;
-  const leftCell  = renderPermItem(row.view, false, editIsChecked, sectionOn);
-  // In read mode only render the Edit cell if Edit is actually checked
-  const showRight = row.edit && (isRead ? editIsChecked : true);
-  const rightCell = showRight ? renderPermItem(row.edit, true, false, sectionOn) : '';
 
-  return `<div class="perm-row">${leftCell}${rightCell}</div>`;
+  if (row.mid) {
+    // Stacked: view-own (core) / view-all / edit-all
+    const midIsChecked = sectionOn ? (state.checked[row.mid.id] || false) : false;
+    const cell1    = renderPermItem(row.view, false, false, sectionOn);
+    const showMid  = isRead ? (midIsChecked || editIsChecked) : true;
+    const cell2    = showMid  ? renderPermItem(row.mid,  false, editIsChecked, sectionOn) : '';
+    const showEdit = row.edit && (isRead ? editIsChecked : true);
+    const cell3    = showEdit ? renderPermItem(row.edit, true,  false,         sectionOn) : '';
+    return `<div class="perm-row perm-row--stacked">${cell1}${cell2}${cell3}</div>`;
+  }
+
+  if (row.edit) {
+    // Stacked: view / edit
+    const cell1    = renderPermItem(row.view, false, editIsChecked, sectionOn);
+    const showEdit = isRead ? editIsChecked : true;
+    const cell2    = showEdit ? renderPermItem(row.edit, true, false, sectionOn) : '';
+    return `<div class="perm-row perm-row--stacked">${cell1}${cell2}</div>`;
+  }
+
+  return `<div class="perm-row">${renderPermItem(row.view, false, false, sectionOn)}</div>`;
 }
 
 // Returns only the rows that have at least one checked permission (for read mode).
@@ -1040,12 +1149,14 @@ function getReadModeRows(section) {
   // Pass 1: keep rows that have a checked view or edit permission
   const filtered = [];
   for (const row of section.rows) {
+    if (row.showWhen && !(state.checked[row.showWhen] || false)) continue;
     if (row.separator) {
       filtered.push(row);
     } else {
       const viewChecked = row.view.core ? isOn : (isOn && (state.checked[row.view.id] || false));
+      const midChecked  = row.mid  ? (isOn && (state.checked[row.mid.id]  || false)) : false;
       const editChecked = row.edit ? (isOn && (state.checked[row.edit.id] || false)) : false;
-      if (viewChecked || editChecked) filtered.push(row);
+      if (viewChecked || midChecked || editChecked) filtered.push(row);
     }
   }
 
@@ -1081,9 +1192,12 @@ function renderSection(section) {
           ${readRows.map(row => renderRow(row, isOn)).join('')}
         </div>`;
   } else if (isOn) {
+    const visibleRows = section.rows.filter(row =>
+      !row.showWhen || (state.checked[row.showWhen] || false)
+    );
     body = `<div class="section-body">
       <div class="perms-subheader">Permissions</div>
-      ${section.rows.map(row => renderRow(row, isOn)).join('')}
+      ${visibleRows.map(row => renderRow(row, isOn)).join('')}
     </div>`;
   }
 
@@ -1099,7 +1213,14 @@ function renderSection(section) {
 function renderAll() {
   const isRead = state.mode === 'read';
 
-  document.getElementById('sections').innerHTML = SECTIONS.map(renderSection).join('');
+  // Sync sidebar active state
+  document.querySelectorAll('.module-item[data-module]').forEach(el => {
+    el.classList.toggle('active', el.dataset.module === state.module);
+  });
+
+  // Render sections for the active module
+  const activeSections = state.module === 'recruitment' ? SECTIONS : ABSENCE_SECTIONS;
+  document.getElementById('sections').innerHTML = activeSections.map(renderSection).join('');
 
   // Edit-permissions button (read mode only)
   const actionsEl = document.getElementById('edit-actions');
@@ -1135,7 +1256,53 @@ function toggleSection(id) {
 
 function togglePerm(id) {
   state.checked[id] = !state.checked[id];
+  if (state.checked[id]) {
+    // Checking an edit perm: auto-check its view and mid siblings
+    ALL_SECTIONS.forEach(s => {
+      s.rows.forEach(row => {
+        if (row.edit && row.edit.id === id) {
+          if (row.view && !row.view.core) state.checked[row.view.id] = true;
+          if (row.mid) state.checked[row.mid.id] = true;
+        }
+      });
+    });
+  } else {
+    ALL_SECTIONS.forEach(s => {
+      s.rows.forEach(row => {
+        // Unchecking a view perm: cascade-uncheck its edit sibling
+        if (row.view && row.view.id === id && !row.view.core &&
+            row.edit && state.checked[row.edit.id]) {
+          state.checked[row.edit.id] = false;
+          clearShowWhenDependents(row.edit.id);
+        }
+        // Unchecking a mid perm: cascade-uncheck its edit sibling
+        if (row.mid && row.mid.id === id &&
+            row.edit && state.checked[row.edit.id]) {
+          state.checked[row.edit.id] = false;
+          clearShowWhenDependents(row.edit.id);
+        }
+        // Clear showWhen dependents of the unchecked perm itself
+        if (row.showWhen === id) {
+          if (row.view && !row.view.core) state.checked[row.view.id] = false;
+          if (row.mid)  state.checked[row.mid.id]  = false;
+          if (row.edit) state.checked[row.edit.id] = false;
+        }
+      });
+    });
+  }
   renderAll();
+}
+
+function clearShowWhenDependents(id) {
+  ALL_SECTIONS.forEach(s => {
+    s.rows.forEach(row => {
+      if (row.showWhen === id) {
+        if (row.view && !row.view.core) state.checked[row.view.id] = false;
+        if (row.mid)  state.checked[row.mid.id]  = false;
+        if (row.edit) state.checked[row.edit.id] = false;
+      }
+    });
+  });
 }
 
 function saveEdit() {
@@ -1153,11 +1320,12 @@ function cancelEdit() {
     state.checked  = { ...state.saved.checked };
   } else {
     // No prior save — revert to all-off initial state
-    SECTIONS.forEach(s => {
+    ALL_SECTIONS.forEach(s => {
       state.sections[s.id] = false;
       s.rows.forEach(row => {
         if (row.separator) return;
         if (row.view && !row.view.core) state.checked[row.view.id] = false;
+        if (row.mid)  state.checked[row.mid.id]  = false;
         if (row.edit) state.checked[row.edit.id] = false;
       });
     });
@@ -1168,6 +1336,11 @@ function cancelEdit() {
 
 function enterEdit() {
   state.mode = 'edit';
+  renderAll();
+}
+
+function switchModule(mod) {
+  state.module = mod;
   renderAll();
 }
 
