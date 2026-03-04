@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HRM Prototypes</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+      background: #fafafa;
+      color: #0a0a0a;
+      min-height: 100vh;
+    }
+
+    /* ── Page layout ── */
+    .page {
+      max-width: 780px;
+      margin: 0 auto;
+      padding: 100px 32px 120px;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      margin-bottom: 72px;
+    }
+
+    .hero-title {
+      font-size: clamp(48px, 8vw, 80px);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 0.95;
+      color: #0a0a0a;
+    }
+
+    .hero-title em {
+      font-style: normal;
+      color: #bbb;
+    }
+
+    /* ── List ── */
+    .list {
+      list-style: none;
+      border-top: 1.5px solid #0a0a0a;
+    }
+
+    /* ── Row ── */
+    .row {
+      border-bottom: 1px solid #e8e8e8;
+    }
+
+    .row-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 26px 0;
+      text-decoration: none;
+      color: inherit;
+      transition: padding-left 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .row-link:hover {
+      padding-left: 8px;
+    }
+
+    .row-link:hover .row-title {
+      color: #0a0a0a;
+    }
+
+    .row-link:hover .row-icon {
+      opacity: 1;
+      transform: translate(2px, -2px);
+    }
+
+    .row-left {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 0;
+    }
+
+    .row-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+      color: #0a0a0a;
+      line-height: 1.2;
+      transition: color 0.15s;
+    }
+
+    .row-meta {
+      font-size: 12px;
+      color: #999;
+      font-weight: 400;
+      letter-spacing: 0.01em;
+    }
+
+    .row-icon {
+      flex-shrink: 0;
+      color: #0a0a0a;
+      opacity: 0.25;
+      transition: opacity 0.2s, transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    /* ── Footer ── */
+    .footer {
+      margin-top: 60px;
+      font-size: 12px;
+      color: #bbb;
+      letter-spacing: 0.02em;
+    }
+
+    @media (max-width: 540px) {
+      .page { padding: 64px 24px 80px; }
+      .hero { margin-bottom: 48px; }
+      .row-title { font-size: 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="page">
+
+  <div class="hero">
+    <h1 class="hero-title">HRM<br><em>Prototypes</em></h1>
+  </div>
+
+  <ul class="list" id="list"></ul>
+
+  <p class="footer" id="footer"></p>
+
+</div>
+
+<script>
+  const FOLDERS = [
+    "employee-profile-branding",
+    "permissions-layout-update",
+  ];
+
+  function humanize(slug) {
+    return slug.replace(/[-_]/g, " ").replace(/^\w/, c => c.toUpperCase());
+  }
+
+  function formatDate(iso) {
+    if (!iso) return null;
+    const d = new Date(iso + "T00:00:00");
+    if (isNaN(d)) return null;
+    return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+  }
+
+  async function fetchMeta(folder) {
+    try {
+      const res = await fetch(`./${folder}/meta.json`, { cache: "no-store" });
+      if (!res.ok) return null;
+      return await res.json();
+    } catch { return null; }
+  }
+
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  async function init() {
+    const protos = await Promise.all(
+      FOLDERS.map(async folder => {
+        const meta = await fetchMeta(folder);
+        return {
+          folder,
+          title: meta?.title || humanize(folder),
+          description: meta?.description || null,
+          updated: meta?.updated || null,
+        };
+      })
+    );
+
+    // Sort: recently updated first, then alphabetical
+    protos.sort((a, b) => {
+      const da = a.updated ? new Date(a.updated) : new Date(0);
+      const db = b.updated ? new Date(b.updated) : new Date(0);
+      if (db - da !== 0) return db - da;
+      return a.title.localeCompare(b.title);
+    });
+
+    const list = document.getElementById("list");
+
+    protos.forEach(p => {
+      const li = document.createElement("li");
+      li.className = "row";
+
+      const datePart = formatDate(p.updated);
+      const metaStr = [p.description, datePart].filter(Boolean).join(" · ");
+
+      li.innerHTML = `
+        <a class="row-link" href="./${escHtml(p.folder)}/" target="_blank" rel="noopener">
+          <div class="row-left">
+            <span class="row-title">${escHtml(p.title)}</span>
+            ${metaStr ? `<span class="row-meta">${escHtml(metaStr)}</span>` : ""}
+          </div>
+          <svg class="row-icon" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="7" y1="17" x2="17" y2="7"/>
+            <polyline points="7 7 17 7 17 17"/>
+          </svg>
+        </a>
+      `;
+      list.appendChild(li);
+    });
+
+    document.getElementById("footer").textContent =
+      `${protos.length} prototype${protos.length !== 1 ? "s" : ""}`;
+  }
+
+  init();
+</script>
+</body>
+</html>
