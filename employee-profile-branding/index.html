@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Employee Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: 'Inter', -apple-system, sans-serif;
+  background: #dde1ea;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+}
+
+:root {
+  --s1: #ffffff;
+  --s2: #f9fafb;
+  --b2: #edeff3;
+  --b3: #e0e4eb;
+  --b4: #a3adc2;
+  --c4: #1f242e;
+  --c3: #3d475c;
+  --c2: #525f7a;
+  --c1: #697a9b;
+  --pri:   #006bd6;
+  --pri-2: #0052a3;
+  --pri-l1: #ebf5ff;
+  --pri-border: #d6eaff;
+  --ok:   #398966;
+  --ok-2: #2a654b;
+  --ok-l: #f3faf7;
+  --ok-b: #e2f3ec;
+  --danger: #d42121;
+  --shadow: rgba(31,36,46,0.1);
+}
+
+/* ── MODAL ── */
+.modal {
+  background: var(--s1);
+  border-radius: 8px;
+  flex: 1;
+  width: 1480px;
+  max-width: 100%;
+  min-height: 0;
+  box-shadow: 0 20px 60px rgba(31,36,46,0.18);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── HEADER ── */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 10px 24px;
+  border-bottom: 1px solid var(--b2);
+  flex-shrink: 0;
+}
+.modal-header-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--c4);
+  line-height: 24px;
+}
+.modal-header-icons { display: flex; gap: 4px; }
+.icon-btn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.icon-btn:hover { background: var(--s2); }
+.icon-btn img { width: 16px; height: 16px; display: block; }
+
+/* ── BODY ── */
+.modal-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── LEFT SIDEBAR ── */
+.sidebar-left {
+  width: 212px;
+  flex-shrink: 0;
+  background: var(--s2);
+  border-right: 1px solid var(--b2);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 0;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background 0.1s;
+  user-select: none;
+}
+.nav-item:hover:not(.active) { background: var(--b2); }
+.nav-item.active {
+  background: var(--pri-l1);
+  border-color: var(--pri-border);
+}
+.nav-icon {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.nav-icon img { width: 16px; height: 16px; display: block; }
+.nav-label {
+  font-size: 14px;
+  color: var(--c4);
+  line-height: 20px;
+  padding-left: 8px;
+  white-space: nowrap;
+}
+
+/* ── SCROLL CONTAINER ── */
+.scroll-container {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* ── BANNER ── */
+.banner {
+  height: 150px;
+  background: #f5bbba;
+  position: relative;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.banner img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── CONTENT AREA ── */
+.content-area {
+  margin-top: -50px;
+  padding: 0 38px 64px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── SUMMARY PERSON ── */
+.summary-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  position: sticky;
+  top: 24px;
+  z-index: 10;
+}
+.avatar-wrap {
+  width: 120px;
+  height: 120px;
+  border-radius: 8px;
+  border: 2px solid white;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+.avatar-wrap img {
+  position: absolute;
+  top: -8.77%;
+  left: -16.38%;
+  width: 122.52%;
+  height: 122.52%;
+  object-fit: cover;
+}
+.summary-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.name-position {
+  flex: 1;
+  min-width: 0;
+}
+.employee-name {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--c4);
+  line-height: 30px;
+  padding: 3px 0;
+}
+.subtitle-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 6px;
+}
+.subtitle-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 20px;
+  padding: 3px 0;
+}
+.subtitle-item img { width: 16px; height: 16px; display: block; flex-shrink: 0; }
+/* location taken out of flow → subtitle-row height = position item only */
+.subtitle-row.wrapped {
+  position: relative;
+}
+.subtitle-row.wrapped #locationItem {
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  white-space: nowrap;
+}
+/* space below summary-row for the floating location row (margin, not padding,
+   so it doesn't affect internal flex cross-axis alignment) */
+.summary-row.wrapped-location {
+  margin-bottom: 26px;
+}
+/* when sticky + wrapped: extend white bg and fade below the location row */
+.summary-row.is-sticky.wrapped-location::before {
+  bottom: -26px;
+}
+.summary-row.is-sticky.wrapped-location::after {
+  top: calc(100% + 26px);
+}
+.subtitle-item span {
+  font-size: 14px;
+  color: var(--c4);
+  line-height: 20px;
+  white-space: nowrap;
+}
+.status-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.status-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+.badge-employed {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 6px;
+  border-radius: 8px;
+  background: var(--ok);
+  border: 1px solid var(--ok-b);
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  line-height: 16px;
+  white-space: nowrap;
+}
+.divider-v {
+  width: 1px;
+  height: 16px;
+  background: var(--b3);
+  flex-shrink: 0;
+}
+.active-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.active-status img { width: 12px; height: 12px; display: block; flex-shrink: 0; }
+.active-status span {
+  font-size: 14px;
+  color: var(--ok-2);
+  line-height: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-feature-settings: 'lnum' 1, 'tnum' 1;
+}
+.btn-more {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--b3);
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s, border-color 0.12s;
+}
+.btn-more:hover { background: var(--s2); border-color: var(--b4); }
+.btn-more img, .btn-more svg { width: 16px; height: 16px; display: block; }
+
+/* ── SECTION CARD ── */
+.section-card {
+  background: white;
+  border: 1px solid var(--b2);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px 0 var(--shadow), 0 1px 2px -1px var(--shadow);
+  overflow: hidden;
+  width: 100%;
+}
+.section-header {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 16px;
+  gap: 8px;
+  border-bottom: 1px solid var(--b2);
+}
+.section-header-left {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--c4);
+  line-height: 20px;
+  white-space: nowrap;
+}
+.section-header-right {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+.badge-pill-primary {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  border: 1px solid var(--pri-2);
+  background: white;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--pri-2);
+  line-height: 16px;
+  white-space: nowrap;
+}
+.ctrl-btn {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+.ctrl-btn:hover { background: var(--s2); }
+.ctrl-btn img, .ctrl-btn svg { width: 16px; height: 16px; }
+
+/* ── INLINE ROW ── */
+.inline-row {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid var(--b2);
+}
+.inline-row:first-of-type { border-top: none; }
+.inline-label {
+  width: 216px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 14px 16px;
+  border-right: 1px solid var(--b2);
+}
+.inline-label.top { align-items: flex-start; }
+.lbl {
+  font-size: 14px;
+  color: var(--c3);
+  line-height: 20px;
+  flex: 1;
+  min-width: 0;
+}
+.lbl-required::after { content: ' *'; color: var(--danger); }
+.lbl-icon {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: white;
+}
+.lbl-icon img { width: 16px; height: 16px; display: block; }
+.inline-value {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  height: 48px;
+  padding: 8px 16px;
+  gap: 4px;
+}
+.val-text {
+  font-size: 14px;
+  color: var(--c4);
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.copy-btn {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  overflow: hidden;
+  cursor: pointer;
+}
+.copy-btn img { width: 16px; height: 16px; display: block; }
+
+/* ── ENTITY VALUE (icon-shape + two-line text) ── */
+.entity-row {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.entity-icon {
+  background: var(--s2);
+  border: 1px solid var(--b3);
+  border-radius: 8px;
+  padding: 8px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+}
+.entity-icon img { width: 16px; height: 16px; display: block; }
+.entity-txt {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 2px;
+}
+.entity-primary {
+  font-size: 14px;
+  color: var(--c4);
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: -2px;
+}
+.entity-secondary {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: -2px;
+}
+.entity-secondary img { width: 12px; height: 12px; flex-shrink: 0; display: block; }
+.entity-secondary span {
+  font-size: 12px;
+  color: var(--c2);
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+.entity-secondary span.muted { color: var(--c1); }
+
+/* ── AVATAR SMALL (Reports to) ── */
+.avatar-sm {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  border: 1.5px solid white;
+  box-shadow: 0 0 0 1.5px var(--pri);
+  flex-shrink: 0;
+  overflow: hidden;
+  position: relative;
+}
+.avatar-sm img {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+/* ── WORKING HOURS FIELD ── */
+.wh-field {
+  flex: 1;
+  min-width: 0;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.wh-firstline {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.wh-main {
+  font-size: 14px;
+  color: var(--c4);
+  line-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+.wh-local-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.wh-local-btn span {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--c1);
+  line-height: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.wh-local-btn img, .wh-local-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.wh-divider { height: 1px; background: var(--b2); }
+.wh-items { display: flex; flex-direction: column; gap: 6px; }
+.wh-item { display: flex; align-items: center; gap: 4px; }
+.wh-item img { width: 16px; height: 16px; flex-shrink: 0; display: block; }
+.wh-item span {
+  font-size: 12px;
+  color: var(--c1);
+  line-height: 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── ACTIVITY PANEL ── */
+.activity-panel {
+  flex-shrink: 0;
+  height: 100%;
+  background: white;
+  border-left: 1px solid var(--b2);
+  display: flex;
+  align-items: flex-start;
+  padding: 12px 0;
+}
+.activity-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+}
+.activity-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 68px;
+}
+.activity-tab-btn {
+  width: 36px; height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--b3);
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  padding: 10px;
+  transition: background 0.12s;
+}
+.activity-tab-btn:hover { background: var(--s2); }
+.activity-tab-btn img { width: 16px; height: 16px; }
+.activity-tab-btn.active {
+  background: var(--pri-l1);
+  border-color: var(--pri-border);
+}
+.activity-tab-label {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--c3);
+  line-height: 14px;
+  letter-spacing: -0.2px;
+  text-align: center;
+}
+
+/* ── STICKY SUMMARY ROW ── */
+.summary-row.is-sticky { align-items: center; }
+
+/* full-width white background overlay — extends up to cover the 24px gap */
+.summary-row.is-sticky::before {
+  content: '';
+  position: absolute;
+  top: -24px; bottom: 0;
+  left: -38px; right: -38px;
+  background: white;
+  z-index: -1;
+}
+/* fade-out gradient below the sticky row */
+.summary-row.is-sticky::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: -38px; right: -38px;
+  height: 28px;
+  background: linear-gradient(to bottom, white, transparent);
+  pointer-events: none;
+}
+/* when activity panel open, compensate for narrower padding */
+.modal-body.panel-open .summary-row.is-sticky::before,
+.modal-body.panel-open .summary-row.is-sticky::after {
+  left: -24px; right: -24px;
+}
+/* avatar shrinks to 48px when sticky */
+.summary-row.is-sticky .avatar-wrap {
+  width: 48px !important;
+  height: 48px !important;
+}
+
+/* ── ACTIVITY FEED PANEL ── */
+.activity-feed-panel {
+  display: none;
+  flex-direction: column;
+  width: 380px;
+  min-width: 280px;
+  flex-shrink: 0;
+  background: white;
+  border-left: 1px solid var(--b2);
+  position: relative;
+  overflow: hidden;
+}
+.activity-feed-panel.open { display: flex; }
+
+/* panel-open state */
+.modal-body.panel-open .scroll-container { min-width: 648px; }
+.banner { transition: height 0.2s ease; }
+.modal-body.panel-open .banner { height: 110px; }
+.avatar-wrap { transition: width 0.2s ease, height 0.2s ease; }
+.modal-body.panel-open .avatar-wrap { width: 88px; height: 88px; }
+.content-area { transition: margin-top 0.2s ease, padding 0.2s ease; }
+.modal-body.panel-open .content-area { margin-top: -28px; padding: 0 24px 64px; }
+.modal-body.panel-open .summary-row { margin-top: 10px; }
+
+/* ── RESIZE HANDLE ── */
+.resize-handle {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  cursor: col-resize;
+  z-index: 10;
+}
+.resize-handle:hover,
+.resize-handle.is-dragging { background: rgba(0,107,214,0.2); }
+
+/* ── AF HEADER ── */
+.af-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--b2);
+  flex-shrink: 0;
+  height: 44px;
+}
+.af-title-row { display: flex; align-items: center; gap: 6px; }
+.af-title { font-size: 14px; font-weight: 500; color: var(--c4); line-height: 20px; }
+.af-ctrl-row { display: flex; align-items: center; }
+.af-ctrl-btn {
+  width: 28px; height: 28px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; background: none;
+  border-radius: 6px; cursor: pointer;
+  transition: background 0.12s;
+}
+.af-ctrl-btn:hover { background: var(--s2); }
+.af-ctrl-btn img { width: 16px; height: 16px; display: block; }
+
+/* ── AF FEED ── */
+.af-feed {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-bottom: 76px;
+}
+
+/* Date divider */
+.af-date { display: flex; align-items: center; padding: 8px 0; }
+.af-date-line { flex: 1; height: 1px; background: var(--b2); }
+.af-date-pill {
+  font-size: 12px; font-weight: 500;
+  color: var(--c4); line-height: 16px;
+  background: white; border: 1px solid var(--b2);
+  border-radius: 9999px; padding: 4px 10px;
+  box-shadow: 0 1px 2px 0 rgba(31,36,46,0.05);
+  flex-shrink: 0;
+}
+
+/* Comment */
+.af-comment { display: flex; gap: 8px; padding: 8px 12px; }
+.af-comment-avatar {
+  width: 32px; height: 32px;
+  border-radius: 8px; flex-shrink: 0; overflow: hidden;
+}
+.af-comment-avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.af-comment-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.af-comment-row { display: flex; align-items: center; gap: 6px; }
+.af-comment-name {
+  flex: 1; font-size: 14px; font-weight: 600; color: var(--c4);
+  line-height: 20px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.af-comment-time {
+  font-size: 12px; color: var(--c2); line-height: 16px;
+  white-space: nowrap; flex-shrink: 0; padding-top: 2px;
+}
+.af-comment-text { font-size: 14px; color: var(--c4); line-height: 20px; }
+
+/* Log group */
+.af-logs-group { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+.af-hide-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 2px 6px; margin-left: 6px;
+  border: none; background: none; cursor: pointer;
+  border-radius: 4px; transition: background 0.12s;
+}
+.af-hide-btn:hover { background: var(--s2); }
+.af-hide-btn img { width: 16px; height: 16px; }
+.af-hide-btn span { font-size: 12px; color: var(--c2); line-height: 16px; }
+.af-log-item { display: flex; align-items: center; gap: 6px; padding: 4px 12px; }
+.af-log-bullet { width: 4px; height: 4px; border-radius: 50%; background: var(--b4); flex-shrink: 0; }
+.af-log-text {
+  flex: 1; font-size: 12px; color: var(--c2); line-height: 16px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.af-log-name { color: var(--c4); }
+.af-log-time { font-size: 12px; color: var(--c2); line-height: 16px; white-space: nowrap; flex-shrink: 0; }
+
+/* New separator */
+.af-new-sep { display: flex; align-items: center; gap: 6px; padding-right: 12px; }
+.af-new-line { flex: 1; height: 1px; background: #b51c70; border-radius: 1px; }
+.af-new-label { font-size: 12px; color: #b51c70; line-height: 16px; flex-shrink: 0; }
+
+/* Comment input */
+.af-input-wrap {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 12px; height: 76px;
+}
+.af-input-gradient {
+  position: absolute;
+  inset: -20px 0 0 0;
+  background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, white 32%);
+  pointer-events: none;
+}
+.af-input-box {
+  background: white;
+  border: 1px solid var(--b2);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(31,36,46,0.1), 0 2px 4px -2px rgba(31,36,46,0.1);
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 12px;
+  position: relative; overflow: hidden; z-index: 1;
+}
+.af-placeholder { flex: 1; font-size: 14px; color: var(--c1); line-height: 20px; }
+.af-send-btn {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  border: none; border-radius: 8px;
+  background: var(--b2); cursor: default;
+  flex-shrink: 0; padding: 10px;
+}
+.af-send-btn img { width: 16px; height: 16px; display: block; }
+</style>
+</head>
+<body>
+
+<div class="modal">
+
+  <!-- ── HEADER ── -->
+  <div class="modal-header">
+    <span class="modal-header-title">Employee</span>
+    <div class="modal-header-icons">
+      <button class="icon-btn" title="Expand">
+        <img src="https://www.figma.com/api/mcp/asset/b6838906-cf79-4a7d-b168-e35366a2c61b" alt="Expand">
+      </button>
+      <button class="icon-btn" title="Close">
+        <img src="https://www.figma.com/api/mcp/asset/b9951579-49d1-44aa-9518-2c72e214a8bc" alt="Close">
+      </button>
+    </div>
+  </div>
+
+  <!-- ── BODY ── -->
+  <div class="modal-body" id="modalBody">
+
+    <!-- ── LEFT NAV ── -->
+    <div class="sidebar-left">
+      <nav class="nav-menu">
+
+        <div class="nav-item active">
+          <span class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/d3d4928e-a7d3-4107-b356-080845e800fc" alt="">
+          </span>
+          <span class="nav-label">Overview</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/e70da513-65f8-4154-9611-1d1fd8073f03" alt="">
+          </span>
+          <span class="nav-label">Working info</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/82f7e902-6a20-4c25-8e0e-883814e0a0c0" alt="">
+          </span>
+          <span class="nav-label">Personal info</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/e68c4587-6b0f-4415-a7a2-994b29cc1576" alt="">
+          </span>
+          <span class="nav-label">Contacts</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/b7df359c-5bc8-4f7f-b456-b7312ad7b7f8" alt="">
+          </span>
+          <span class="nav-label">Recruitment</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/f6b53885-7023-4a53-b1ed-6126980c308c" alt="">
+          </span>
+          <span class="nav-label">Documents</span>
+        </div>
+
+        <div class="nav-item">
+          <span class="nav-icon">
+            <img src="https://www.figma.com/api/mcp/asset/ed33570e-5cf2-4e4d-b573-a33697f9a5b9" alt="">
+          </span>
+          <span class="nav-label">Space access</span>
+        </div>
+
+      </nav>
+    </div>
+
+    <!-- ── SCROLL AREA ── -->
+    <div class="scroll-container">
+
+      <!-- Banner -->
+      <div class="banner">
+        <img src="https://www.figma.com/api/mcp/asset/486a7166-7f40-48e5-9f9a-21e2a71ea101" alt="">
+      </div>
+
+      <!-- Content -->
+      <div class="content-area">
+
+        <!-- ── SUMMARY ── -->
+        <div class="summary-row">
+
+          <!-- Avatar -->
+          <div class="avatar-wrap">
+            <img src="https://www.figma.com/api/mcp/asset/cef5f661-69e3-4229-a704-9bdbb1a88ab8" alt="Eleanor Lawrence">
+          </div>
+
+          <!-- Name + status -->
+          <div class="summary-right">
+            <div class="name-position">
+              <div class="employee-name">Eleanor Lawrence</div>
+              <div class="subtitle-row">
+                <div class="subtitle-item">
+                  <img src="https://www.figma.com/api/mcp/asset/5016bfcc-9ceb-40a9-8e57-affe775f2931" alt="">
+                  <span>Senior Product Manager at Employo</span>
+                </div>
+                <div class="subtitle-item" id="locationItem">
+                  <img src="https://www.figma.com/api/mcp/asset/a2c20fa9-ef08-4b2d-a737-52ac7c846a47" alt="">
+                  <span>Ivano-Frankivsk, Ukraine</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="status-actions">
+              <div class="status-info">
+                <span class="badge-employed">Employed</span>
+                <div class="divider-v"></div>
+                <div class="active-status">
+                  <img src="https://www.figma.com/api/mcp/asset/bd4821f9-241e-4139-8cff-f45f4dd2ac63" alt="">
+                  <span>Active</span>
+                </div>
+              </div>
+              <button class="btn-more">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="3" cy="8" r="1.5" fill="#525f7a"/>
+                  <circle cx="8" cy="8" r="1.5" fill="#525f7a"/>
+                  <circle cx="13" cy="8" r="1.5" fill="#525f7a"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div><!-- /summary-row -->
+
+        <!-- ── LOCAL TIME ── -->
+        <div class="section-card">
+          <div class="section-header">
+            <div class="section-header-left">
+              <span class="section-title">Local time</span>
+            </div>
+          </div>
+          <div class="inline-row">
+            <div class="inline-value" style="height:48px;border:none;">
+              <span class="val-text">14:24 (GMT +3)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── CONTACTS ── -->
+        <div class="section-card">
+          <div class="section-header">
+            <div class="section-header-left">
+              <span class="section-title">Contacts</span>
+            </div>
+          </div>
+          <div class="inline-row">
+            <div class="inline-label">
+              <span class="lbl" style="flex:1;">Email</span>
+              <span class="lbl-icon">
+                <img src="https://www.figma.com/api/mcp/asset/16e0febe-9f7f-4294-a6c1-9b4a81454549" alt="">
+              </span>
+            </div>
+            <div class="inline-value">
+              <span class="val-text">eleanor_lawrence@gmail.com</span>
+              <span class="copy-btn">
+                <img src="https://www.figma.com/api/mcp/asset/446f124c-2172-4f1b-9f87-7a5d9826a345" alt="Copy">
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── SR. PRODUCT DESIGNER / DIRECT REPORTING ── -->
+        <div class="section-card">
+          <div class="section-header">
+            <div class="section-header-left">
+              <span class="section-title">Sr. Product Designer</span>
+              <span class="badge-pill-primary">Direct reporting</span>
+            </div>
+            <div class="section-header-right">
+              <button class="ctrl-btn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <circle cx="3" cy="8" r="1.5" fill="#525f7a"/>
+                  <circle cx="8" cy="8" r="1.5" fill="#525f7a"/>
+                  <circle cx="13" cy="8" r="1.5" fill="#525f7a"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Position -->
+          <div class="inline-row">
+            <div class="inline-label">
+              <span class="lbl lbl-required">Position</span>
+            </div>
+            <div class="inline-value" style="padding-top:4px;padding-bottom:4px;height:auto;min-height:48px;">
+              <div class="entity-row">
+                <div class="entity-icon">
+                  <img src="https://www.figma.com/api/mcp/asset/c01dd9b6-2787-4d27-b601-462bd9610c62" alt="">
+                </div>
+                <div class="entity-txt">
+                  <div class="entity-primary">Sr. Product Designer</div>
+                  <div class="entity-secondary">
+                    <img src="https://www.figma.com/api/mcp/asset/2fafce2e-031c-46a4-9f08-a0f68b9323aa" alt="">
+                    <span>Develux</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Reports to -->
+          <div class="inline-row">
+            <div class="inline-label">
+              <span class="lbl">Reports to</span>
+            </div>
+            <div class="inline-value" style="padding-top:4px;padding-bottom:4px;height:auto;min-height:48px;">
+              <div class="entity-row">
+                <div class="avatar-sm">
+                  <img src="https://www.figma.com/api/mcp/asset/10d48cb2-95fc-4aed-8f72-df849a60d889" alt="George Baylor">
+                </div>
+                <div class="entity-txt">
+                  <div class="entity-primary">George Baylor</div>
+                  <div class="entity-secondary">
+                    <span>Head of Product at HRM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Position job -->
+          <div class="inline-row">
+            <div class="inline-label">
+              <span class="lbl">Position job</span>
+            </div>
+            <div class="inline-value" style="padding-top:4px;padding-bottom:4px;height:auto;min-height:48px;">
+              <div class="entity-row">
+                <div class="entity-icon">
+                  <img src="https://www.figma.com/api/mcp/asset/b71f3151-ec98-414a-bbd3-9b235a99a20c" alt="">
+                </div>
+                <div class="entity-txt">
+                  <div class="entity-primary">Product Designer</div>
+                  <div class="entity-secondary">
+                    <img src="https://www.figma.com/api/mcp/asset/2fafce2e-031c-46a4-9f08-a0f68b9323aa" alt="">
+                    <span>Develux</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── WORKING SCHEDULE ── -->
+        <div class="section-card">
+          <div class="section-header">
+            <div class="section-header-left">
+              <span class="section-title">Working schedule</span>
+            </div>
+          </div>
+
+          <!-- Working schedule row -->
+          <div class="inline-row">
+            <div class="inline-label">
+              <span class="lbl lbl-required">Working schedule</span>
+            </div>
+            <div class="inline-value" style="padding-top:4px;padding-bottom:4px;height:auto;min-height:48px;">
+              <div class="entity-row">
+                <div class="entity-icon">
+                  <img src="https://www.figma.com/api/mcp/asset/acc8ee6a-fd36-43b0-866d-aab262c32abb" alt="">
+                </div>
+                <div class="entity-txt">
+                  <div class="entity-primary">Company Full-time</div>
+                  <div class="entity-secondary">
+                    <img src="https://www.figma.com/api/mcp/asset/2fafce2e-031c-46a4-9f08-a0f68b9323aa" alt="">
+                    <span class="muted">HRM</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Schedule time zone -->
+          <div class="inline-row">
+            <div class="inline-label">
+              <span class="lbl">Schedule time zone</span>
+            </div>
+            <div class="inline-value">
+              <span class="val-text">Europe/Kyiv (UTC+2)</span>
+            </div>
+          </div>
+
+          <!-- Working hours -->
+          <div class="inline-row" style="align-items:stretch;">
+            <div class="inline-label top">
+              <span class="lbl">Working hours</span>
+            </div>
+            <div class="wh-field">
+              <div class="wh-firstline">
+                <span class="wh-main">5 days/week, 40 hours/week, flexible time slots</span>
+                <button class="wh-local-btn">
+                  <span>My local time</span>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                    <path d="M4 6l4 4 4-4" stroke="#697a9b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+              <div class="wh-divider"></div>
+              <div class="wh-items">
+                <div class="wh-item">
+                  <img src="https://www.figma.com/api/mcp/asset/ed354ee3-c3c3-41e3-9a08-799e1cd9bc6c" alt="">
+                  <span>Mon: 9:00–17:00, 8 hours/day</span>
+                </div>
+                <div class="wh-item">
+                  <img src="https://www.figma.com/api/mcp/asset/493d5967-9ffc-4d75-abb7-d762a6d7347f" alt="">
+                  <span>Tue: 8:00–18:00, 8 hours/day</span>
+                </div>
+                <div class="wh-item">
+                  <img src="https://www.figma.com/api/mcp/asset/493d5967-9ffc-4d75-abb7-d762a6d7347f" alt="">
+                  <span>Wed: 8:00–12:00, 14:00–18:00, 8 hours/day</span>
+                </div>
+                <div class="wh-item">
+                  <img src="https://www.figma.com/api/mcp/asset/493d5967-9ffc-4d75-abb7-d762a6d7347f" alt="">
+                  <span>Thu: 8:00–18:00, 8 hours/day</span>
+                </div>
+                <div class="wh-item">
+                  <img src="https://www.figma.com/api/mcp/asset/32eda834-b1d5-41be-b9df-98f8e49fe11b" alt="">
+                  <span>Fri: 8:00–18:00, 8 hours/day</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /working schedule -->
+
+      </div><!-- /content-area -->
+    </div><!-- /scroll-container -->
+
+    <!-- ── ACTIVITY FEED PANEL (hidden by default) ── -->
+    <div class="activity-feed-panel" id="activityFeedPanel">
+      <div class="resize-handle" id="resizeHandle"></div>
+
+      <!-- Header -->
+      <div class="af-header">
+        <div class="af-title-row">
+          <span class="af-title">Activity</span>
+          <button class="af-ctrl-btn" title="Refresh">
+            <img src="https://www.figma.com/api/mcp/asset/27827e07-96c9-4f92-9eb1-4e7fc7aa66fe" alt="">
+          </button>
+        </div>
+        <div class="af-ctrl-row">
+          <button class="af-ctrl-btn" title="Search">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <circle cx="7" cy="7" r="4.5" stroke="#697a9b" stroke-width="1.5"/>
+              <path d="M10.5 10.5L14 14" stroke="#697a9b" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+          <button class="af-ctrl-btn" title="View">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M1.5 8C1.5 8 3.5 3.5 8 3.5S14.5 8 14.5 8 12.5 12.5 8 12.5 1.5 8 1.5 8Z" stroke="#697a9b" stroke-width="1.5" stroke-linejoin="round"/>
+              <circle cx="8" cy="8" r="2" stroke="#697a9b" stroke-width="1.5"/>
+            </svg>
+          </button>
+          <button class="af-ctrl-btn" title="Filter">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2 4h12M4 8h8M6 12h4" stroke="#697a9b" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Feed -->
+      <div class="af-feed">
+
+        <!-- Date divider -->
+        <div class="af-date">
+          <div class="af-date-line"></div>
+          <span class="af-date-pill">Today</span>
+          <div class="af-date-line"></div>
+        </div>
+
+        <!-- Comment 1 -->
+        <div class="af-comment">
+          <div class="af-comment-avatar">
+            <img src="https://www.figma.com/api/mcp/asset/2a9225b9-0592-429d-b819-e137205acbd9" alt="Aspen Westervelt">
+          </div>
+          <div class="af-comment-body">
+            <div class="af-comment-row">
+              <span class="af-comment-name">Aspen Westervelt</span>
+              <span class="af-comment-time">4:10 PM</span>
+            </div>
+            <div class="af-comment-text">I love this dude</div>
+          </div>
+        </div>
+
+        <!-- Log group -->
+        <div class="af-logs-group">
+          <button class="af-hide-btn">
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M4 10l4-4 4 4" stroke="#697a9b" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span>Hide</span>
+          </button>
+          <div class="af-log-item">
+            <span class="af-log-bullet"></span>
+            <span class="af-log-text"><span class="af-log-name">Olha Prostova</span> removed assignee: You</span>
+            <span class="af-log-time">8:38 PM</span>
+          </div>
+          <div class="af-log-item">
+            <span class="af-log-bullet"></span>
+            <span class="af-log-text"><span class="af-log-name">Olha Prostova</span> removed assignee: You</span>
+            <span class="af-log-time">8:38 PM</span>
+          </div>
+        </div>
+
+        <!-- Comment 2 -->
+        <div class="af-comment">
+          <div class="af-comment-avatar">
+            <img src="https://www.figma.com/api/mcp/asset/2a9225b9-0592-429d-b819-e137205acbd9" alt="Aspen Westervelt">
+          </div>
+          <div class="af-comment-body">
+            <div class="af-comment-row">
+              <span class="af-comment-name">Aspen Westervelt</span>
+              <span class="af-comment-time">4:10 PM</span>
+            </div>
+            <div class="af-comment-text">I love this dude</div>
+          </div>
+        </div>
+
+        <!-- New separator -->
+        <div class="af-new-sep">
+          <div class="af-new-line"></div>
+          <span class="af-new-label">new</span>
+        </div>
+
+        <!-- Log group 2 -->
+        <div class="af-logs-group">
+          <div class="af-log-item">
+            <span class="af-log-bullet"></span>
+            <span class="af-log-text"><span class="af-log-name">Olha Prostova</span> removed assignee: You</span>
+            <span class="af-log-time">8:38 PM</span>
+          </div>
+        </div>
+
+      </div><!-- /af-feed -->
+
+      <!-- Comment input -->
+      <div class="af-input-wrap">
+        <div class="af-input-gradient"></div>
+        <div class="af-input-box">
+          <span class="af-placeholder">Write a comment...</span>
+          <button class="af-send-btn" disabled>
+            <img src="https://www.figma.com/api/mcp/asset/3dc83d9e-6df9-4f81-a096-31a8a8a76dfc" alt="">
+          </button>
+        </div>
+      </div>
+
+    </div><!-- /activity-feed-panel -->
+
+    <!-- ── ACTIVITY TABS STRIP (always visible) ── -->
+    <div class="activity-panel">
+      <div class="activity-tabs">
+        <div class="activity-tab">
+          <button class="activity-tab-btn" id="activityTabBtn" onclick="toggleActivityPanel()">
+            <img src="https://www.figma.com/api/mcp/asset/868a1540-f8c9-4917-8a2f-04fa78777258" alt="">
+          </button>
+          <span class="activity-tab-label">Activity</span>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /modal-body -->
+</div><!-- /modal -->
+
+
+<script>
+// ── ACTIVITY PANEL TOGGLE ──
+function toggleActivityPanel() {
+  const modalBody = document.getElementById('modalBody');
+  const feedPanel = document.getElementById('activityFeedPanel');
+  const tabBtn    = document.getElementById('activityTabBtn');
+  const isOpen    = feedPanel.classList.contains('open');
+  feedPanel.classList.toggle('open', !isOpen);
+  modalBody.classList.toggle('panel-open', !isOpen);
+  tabBtn.classList.toggle('active', !isOpen);
+  // Recompute sticky threshold after CSS transitions finish
+  if (window._recomputeSticky) setTimeout(window._recomputeSticky, 220);
+}
+
+// ── RESIZE ──
+(function () {
+  const handle     = document.getElementById('resizeHandle');
+  const feedPanel  = document.getElementById('activityFeedPanel');
+  const modalBody  = document.getElementById('modalBody');
+  const SIDEBAR    = 212;
+  const TABS       = 68;
+  const MIN_PANEL  = 280;
+  const MIN_SCROLL = 648;
+
+  let startX, startWidth;
+
+  handle.addEventListener('mousedown', e => {
+    e.preventDefault();
+    startX     = e.clientX;
+    startWidth = feedPanel.offsetWidth;
+    handle.classList.add('is-dragging');
+    document.body.style.cursor     = 'col-resize';
+    document.body.style.userSelect = 'none';
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup',   onUp);
+  });
+
+  function onMove(e) {
+    const dx       = startX - e.clientX;
+    const maxWidth = modalBody.offsetWidth - SIDEBAR - TABS - MIN_SCROLL;
+    const clamped  = Math.max(MIN_PANEL, Math.min(startWidth + dx, maxWidth));
+    feedPanel.style.width = clamped + 'px';
+  }
+
+  function onUp() {
+    handle.classList.remove('is-dragging');
+    document.body.style.cursor     = '';
+    document.body.style.userSelect = '';
+    document.removeEventListener('mousemove', onMove);
+    document.removeEventListener('mouseup',   onUp);
+  }
+})();
+
+// ── STICKY SUMMARY ROW ──
+(function () {
+  const container  = document.querySelector('.scroll-container');
+  const summaryRow = document.querySelector('.summary-row');
+  let threshold    = Infinity;
+
+  function computeThreshold() {
+    // Temporarily remove is-sticky so we measure the natural (non-stuck) position
+    const wasSticky = summaryRow.classList.contains('is-sticky');
+    summaryRow.classList.remove('is-sticky');
+
+    const cRect = container.getBoundingClientRect();
+    const rRect = summaryRow.getBoundingClientRect();
+    // threshold = scroll distance at which summaryRow top reaches 24px from container top
+    threshold = rRect.top - cRect.top + container.scrollTop - 24;
+
+    // Restore or apply sticky based on current scroll
+    checkSticky();
+  }
+
+  function checkSticky() {
+    summaryRow.classList.toggle('is-sticky', container.scrollTop >= threshold);
+  }
+
+  container.addEventListener('scroll', checkSticky, { passive: true });
+
+  // Expose recompute for panel toggle and subtitle wrap
+  window._recomputeSticky    = computeThreshold;
+  window._recomputeStickyNow = computeThreshold;
+
+  // Initial computation after layout settles
+  setTimeout(computeThreshold, 50);
+})();
+
+// ── SUBTITLE ROW WRAP ──
+(function () {
+  const subtitleRow   = document.querySelector('.subtitle-row');
+  const locationItem  = document.getElementById('locationItem');
+  const statusActions = document.querySelector('.status-actions');
+  const summaryRight  = document.querySelector('.summary-right');
+  const summaryRow    = document.querySelector('.summary-row');
+
+  function checkWrap() {
+    const wasWrapped = subtitleRow.classList.contains('wrapped');
+
+    // Remove wrap to measure natural (unwrapped) positions
+    subtitleRow.classList.remove('wrapped');
+    summaryRow.classList.remove('wrapped-location');
+
+    const locRect  = locationItem.getBoundingClientRect();
+    const statRect = statusActions.getBoundingClientRect();
+    const gap      = statRect.left - locRect.right;
+
+    const shouldWrap = gap < 24;
+    subtitleRow.classList.toggle('wrapped', shouldWrap);
+    summaryRow.classList.toggle('wrapped-location', shouldWrap);
+
+    // If wrap state changed, sticky threshold needs updating (row height changed)
+    if (shouldWrap !== wasWrapped && window._recomputeStickyNow) {
+      window._recomputeStickyNow();
+    }
+  }
+
+  const ro = new ResizeObserver(checkWrap);
+  ro.observe(summaryRight);
+})();
+</script>
+</body>
+</html>
